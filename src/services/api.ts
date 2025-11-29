@@ -1,6 +1,6 @@
 import type { Client } from "../types/client";
 
-const API_URL = "http://localhost:4000/clients";
+const API_URL = "https://clientmanager-api.onrender.com/clients";
 
 // Obtener todos los clientes
 export const getClients = async (): Promise<Client[]> => {
