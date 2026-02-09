@@ -1,3 +1,14 @@
 {
-  "clients": []
+  "clients": [
+    {
+      "id": "cc00",
+      "name": "celeste",
+      "email": "celes@google.com",
+      "phone": "🇦🇷 +54(011)3590-1121",
+      "address": "trer",
+      "company": "rteter",
+      "position": "tretre",
+      "notes": "ret"
+    }
+  ]
 }

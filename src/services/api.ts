@@ -1,45 +1,54 @@
+// src/api/clients.ts
 import type { Client } from "../types/client";
 
-const API_URL = "https://crm-client-1-191a.onrender.com";
+// Nombre de la key en localStorage
+const STORAGE_KEY = "crm_clients";
+
+// Función para obtener los clientes del localStorage o inicializar vacíos
+const loadClients = (): Client[] => {
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (data) return JSON.parse(data);
+  return [];
+};
+
+// Guardar clientes en localStorage
+const saveClients = (clients: Client[]) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+};
 
 // Obtener todos los clientes
 export const getClients = async (): Promise<Client[]> => {
-  const res = await fetch(API_URL);
-  if (!res.ok) throw new Error("Error al obtener clientes");
-  return res.json();
+  return loadClients();
 };
 
 // Obtener cliente por id
 export const getClient = async (id: string): Promise<Client> => {
-  const res = await fetch(`${API_URL}/${id}`);
-  if (!res.ok) throw new Error("Error al obtener cliente");
-  return res.json();
+  const clients = loadClients();
+  const client = clients.find(c => c.id === id);
+  if (!client) throw new Error("Cliente no encontrado");
+  return client;
 };
 
 // Crear cliente
 export const createClient = async (client: Omit<Client, "id">): Promise<Client> => {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(client),
-  });
-  if (!res.ok) throw new Error("Error al crear cliente");
-  return res.json();
+  const clients = loadClients();
+  const newClient: Client = { id: (clients.length + 1).toString(), ...client };
+  clients.push(newClient);
+  saveClients(clients);
+  return newClient;
 };
 
 // Editar cliente
 export const updateClient = async (id: string, client: Client): Promise<Client> => {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(client),
-  });
-  if (!res.ok) throw new Error("Error al actualizar cliente");
-  return res.json();
+  let clients = loadClients();
+  clients = clients.map(c => (c.id === id ? client : c));
+  saveClients(clients);
+  return client;
 };
 
 // Borrar cliente
 export const deleteClient = async (id: string): Promise<void> => {
-  const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  if (!res.ok) throw new Error("Error al eliminar cliente");
+  let clients = loadClients();
+  clients = clients.filter(c => c.id !== id);
+  saveClients(clients);
 };
